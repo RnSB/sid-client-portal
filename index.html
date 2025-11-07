@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="fr" id="htmlRoot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portail Client Expert IT 360° - Sid Ahmed Belkadi">
+    <title>SID BELKADI | Client Portal Pro</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #0066ff;
+            --secondary: #0044cc;
+            --accent: #3399ff;
+            --bg-main: #ffffff;
+            --bg-section: rgba(250, 250, 255, 0.8);
+            --text-main: #000000;
+            --text-secondary: #333333;
+            --border-color: rgba(0, 102, 255, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        /* RTL Support for Arabic */
+        body[dir="rtl"] {
+            text-align: right;
+        }
+
+        body[dir="rtl"] .chat-message.user {
+            margin-left: 0;
+            margin-right: auto;
+        }
+
+        body[dir="rtl"] .btn-primary {
+            margin-left: 0;
+            margin-right: auto;
+        }
+
+        /* LANGUAGE SELECTOR */
+        .lang-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(0, 102, 255, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem;
+            backdrop-filter: blur(10px);
+            font-weight: 500;
+        }
+
+        .lang-selector select {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0.3rem;
+        }
+
+        .lang-selector select:focus {
+            outline: none;
+        }
+
+        /* TECH BACKGROUND */
+        .tech-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -2;
+            background: radial-gradient(ellipse at center, #ffffff 0%, #f5f7ff 100%);
+        }
+
+        #neural-canvas {
+            position: absolute;
+            width: 100%; height: 100%;
+            z-index: -1;
+        }
+
+        /* LOADER */
+        .loader {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--bg-main);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-icon {
+            width: 60px; height: 60px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            animation: fadeInUp 1s ease 0.3s forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -2px;
+        }
+
+        .tagline {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            opacity: 0.9;
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            font-weight: 400;
+        }
+
+        /* BADGES */
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 4rem;
+        }
+
+        .badge {
+            background: var(--primary);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 102, 255, 0.2);
+        }
+
+        .badge:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.3);
+        }
+
+        /* PORTAL SECTIONS */
+        .portal-section {
+            background: var(--bg-section);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 3rem;
+            transition: all 0.4s ease;
+        }
+
+        .portal-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 102, 255, 0.1);
+            border-color: rgba(0, 102, 255, 0.5);
+        }
+
+        .portal-section h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 700;
+        }
+
+        .portal-section h2 i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        /* FORM */
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.6rem;
+            color: var(--accent);
+            font-weight: 500;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            background: var(--bg-main);
+            border: 2px solid var(--border-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 102, 255, 0.15);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 102, 255, 0.25);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 102, 255, 0.05);
+        }
+
+        /* CHAT */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 420px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .chat-message {
+            margin-bottom: 1.2rem;
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            max-width: 85%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .chat-message.bot {
+            background: rgba(0, 102, 255, 0.08);
+            color: var(--primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .chat-message.user {
+            background: rgba(0, 153, 255, 0.1);
+            color: var(--text-main);
+            margin-left: auto;
+            border: 1px solid rgba(0, 153, 255, 0.3);
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+        }
+
+        /* DASHBOARD */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .dashboard-card {
+            text-align: center;
+            padding: 2.5rem 2rem;
+            background: rgba(0, 102, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 102, 255, 0.1);
+            border-color: var(--primary);
+        }
+
+        .dashboard-card .number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-card .label {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 6rem;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-title {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .footer-contact {
+            color: var(--primary);
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 768px) {
+            .portal-container {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+            .hero h1 {
+                font-size: 3rem;
+            }
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .portal-section {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- LANGUAGE SELECTOR -->
+    <div class="lang-selector">
+        <select id="langSelector" onchange="changeLanguage(this.value)">
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+            <option value="ar">العربية</option>
+        </select>
+    </div>
+
+    <!-- LOADER -->
+    <div class="loader" id="loader">
+        <div class="loader-icon"></div>
+    </div>
+
+    <!-- TECH BACKGROUND -->
+    <div class="tech-bg"></div>
+    <canvas id="neural-canvas"></canvas>
+    
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 data-translate="heroTitle">SID AHMED BELKADI</h1>
+            <div class="tagline" data-translate="tagline">EXPERT IT 360°</div>
+            <div class="subtitle" data-translate="subtitle">Consultant International | Formateur Certifié | Partenaire Enterprise</div>
+            
+            <div class="badges">
+                <div class="badge" data-translate="badgeOdoo">ODOO PARTNER</div>
+                <div class="badge" data-translate="badgeNutanix">NUTANIX PARTNER</div>
+                <div class="badge" data-translate="badgeHuawei">HUAWEI PARTNER</div>
+            </div>
+            
+            <div style="color: var(--text-secondary); margin-top: 2rem; font-size: 1.1rem; letter-spacing: 1px;" data-translate="scrollText">
+                SCROLL TO ACCESS CLIENT PORTAL
+            </div>
+        </div>
+    </section>
+
+    <!-- CLIENT PORTAL -->
+    <section style="padding: 6rem 0;">
+        <div style="text-align: center; margin-bottom: 4rem;">
+            <h2 style="font-family: Montserrat; font-size: 3rem; color: var(--accent); margin-bottom: 1rem; letter-spacing: -1px;" data-translate="portalTitle">
+                CLIENT INTELLIGENCE PORTAL
+            </h2>
+            <p style="font-size: 1.2rem; color: var(--text-secondary); max-width: 800px; margin: 0 auto;" data-translate="portalDesc">
+                Qualify your needs in 2 minutes with our advanced AI-powered system
+            </p>
+        </div>
+
+        <div class="portal-container">
+            <!-- FORM -->
+            <div class="portal-section">
+                <h2><i class="fas fa-clipboard-list"></i> <span data-translate="formTitle">Project Brief</span></h2>
+                
+                <form id="clientForm">
+                    <!-- Step 1 -->
+                    <div class="form-step active" data-step="1">
+                        <div class="form-group">
+                            <label data-translate="serviceTypeLabel">Service Type</label>
+                            <select name="serviceType" required>
+                                <option value="" data-translate="selectService">Select Service</option>
+                                <option value="erp" data-translate="optionERP">ERP Implementation (Odoo/SAP)</option>
+                                <option value="ai" data-translate="optionAI">AI & Custom Chatbot Solutions</option>
+                                <option value="datacenter" data-translate="optionDC">Enterprise Data Center (Huawei/Nutanix)</option>
+                                <option value="cyber" data-translate="optionCyber">Cybersecurity Audit & Pentest</option>
+                                <option value="training" data-translate="optionTraining">IT 360° Training (Teams 10-50)</option>
+                                <option value="consulting" data-translate="optionConsulting">Strategic Digital Consulting</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="companyLabel">Company Name</label>
+                            <input type="text" name="company" placeholder="" data-translate-placeholder="companyPlaceholder" required />
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="emailLabel">Professional Email</label>
+                            <input type="email" name="email" placeholder="" data-translate-placeholder="emailPlaceholder" required />
+                        </div>
+                        <button type="button" class="btn" onclick="nextStep()" data-translate="nextBtn">Next Step →</button>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="form-step" data-step="2">
+                        <div class="form-group">
+                            <label data-translate="descriptionLabel">Project Description</label>
+                            <textarea name="description" rows="4" placeholder="" data-translate-placeholder="descriptionPlaceholder" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="deadlineLabel">Desired Deadline</label>
+                            <input type="date" name="deadline" required />
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <button type="button" class="btn btn-secondary" onclick="prevStep()" data-translate="backBtn">← Back</button>
+                            <button type="button" class="btn" onclick="nextStep()" data-translate="nextBtn">Next Step →</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="form-step" data-step="3">
+                        <div class="form-group">
+                            <label data-translate="budgetLabel">Estimated Budget</label>
+                            <select name="budget" required>
+                                <option value="" data-translate="budgetOption1">&lt; €5,000 (Quick Project)</option>
+                                <option value="5k-15k" data-translate="budgetOption2">€5,000 - €15,000 (Standard)</option>
+                                <option value="15k-50k" data-translate="budgetOption3">€15,000 - €50,000 (Enterprise)</option>
+                                <option value=">50k" data-translate="budgetOption4">&gt; €50,000 (Custom)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="phoneLabel">Phone (Optional)</label>
+                            <input type="tel" name="phone" placeholder="+213 6 58 64 12 63" />
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <button type="button" class="btn btn-secondary" onclick="prevStep()" data-translate="backBtn">← Back</button>
+                            <button type="submit" class="btn" data-translate="submitBtn">SUBMIT REQUEST</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- AI ASSISTANT -->
+            <div class="portal-section">
+                <h2><i class="fas fa-robot"></i> <span data-translate="chatTitle">AI Expert Assistant</span></h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;" data-translate="chatDesc">
+                    Ask technical questions, get instant personalized recommendations powered by AI.
+                </p>
+                
+                <div class="chat-container" id="chatContainer">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-message bot" data-translate="chatWelcome">
+                            <strong>AI Assistant:</strong> Welcome. How can I help you today? (Example: "ERP for 20 users?")
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="chatInput" placeholder="" data-translate-placeholder="chatPlaceholder" />
+                        <button class="btn" onclick="sendChatMessage()">→</button>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1rem;">
+                    <small style="color: var(--text-secondary);" data-translate="chatExamples">
+                        Examples: "Odoo pricing?", "AI for e-commerce?", "Network security audit?"
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN DASHBOARD -->
+        <div class="portal-section" style="margin: 4rem auto; max-width: 1400px;">
+            <h2><i class="fas fa-tachometer-alt"></i> <span data-translate="dashboardTitle">Admin Dashboard</span></h2>
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <div class="number">12</div>
+                    <div class="label" data-translate="requestsLabel">New Requests</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="number">8</div>
+                    <div class="label" data-translate="analysisLabel">In Analysis</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="number">3</div>
+                    <div class="label" data-translate="proposalsLabel">Proposals Sent</div>
+                </div>
+                <div class="dashboard-card">
+                    <div class="number">€45K</div>
+                    <div class="label" data-translate="pipelineLabel">Monthly Pipeline</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-title" data-translate="footerTitle">Developed by SID AHMED BELKADI | Expert IT 360°</div>
+            <div class="footer-contact">
+                sidahblk3143@gmail.com | +213 6 58 64 12 63
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ====== TRANSLATION SYSTEM ======
+        const translations = {
+            en: {
+                heroTitle: "SID AHMED BELKADI",
+                tagline: "EXPERT IT 360°",
+                subtitle: "Consultant International | Formateur Certifié | Partenaire Enterprise",
+                badgeOdoo: "ODOO PARTNER",
+                badgeNutanix: "NUTANIX PARTNER",
+                badgeHuawei: "HUAWEI PARTNER",
+                scrollText: "SCROLL TO ACCESS CLIENT PORTAL",
+                portalTitle: "CLIENT INTELLIGENCE PORTAL",
+                portalDesc: "Qualify your needs in 2 minutes with our advanced AI-powered system",
+                formTitle: "Project Brief",
+                serviceTypeLabel: "Service Type",
+                selectService: "Select Service",
+                optionERP: "ERP Implementation (Odoo/SAP)",
+                optionAI: "AI & Custom Chatbot Solutions",
+                optionDC: "Enterprise Data Center (Huawei/Nutanix)",
+                optionCyber: "Cybersecurity Audit & Pentest",
+                optionTraining: "IT 360° Training (Teams 10-50)",
+                optionConsulting: "Strategic Digital Consulting",
+                companyLabel: "Company Name",
+                companyPlaceholder: "Your Company",
+                emailLabel: "Professional Email",
+                emailPlaceholder: "ceo@company.com",
+                nextBtn: "Next Step →",
+                descriptionLabel: "Project Description",
+                descriptionPlaceholder: "Describe your technical requirements in detail...",
+                deadlineLabel: "Desired Deadline",
+                backBtn: "← Back",
+                budgetLabel: "Estimated Budget",
+                budgetOption1: "< €5,000 (Quick Project)",
+                budgetOption2: "€5,000 - €15,000 (Standard)",
+                budgetOption3: "€15,000 - €50,000 (Enterprise)",
+                budgetOption4: "> €50,000 (Custom)",
+                phoneLabel: "Phone (Optional)",
+                submitBtn: "SUBMIT REQUEST",
+                chatTitle: "AI Expert Assistant",
+                chatDesc: "Ask technical questions, get instant personalized recommendations powered by AI.",
+                chatWelcome: "<strong>AI Assistant:</strong> Welcome. How can I help you today? (Example: \"ERP for 20 users?\")",
+                chatPlaceholder: "Your technical question...",
+                chatExamples: "Examples: \"Odoo pricing?\", \"AI for e-commerce?\", \"Network security audit?\"",
+                dashboardTitle: "Admin Dashboard",
+                requestsLabel: "New Requests",
+                analysisLabel: "In Analysis",
+                proposalsLabel: "Proposals Sent",
+                pipelineLabel: "Monthly Pipeline",
+                footerTitle: "Developed by SID AHMED BELKADI | Expert IT 360°"
+            },
+            fr: {
+                heroTitle: "SID AHMED BELKADI",
+                tagline: "EXPERT IT 360°",
+                subtitle: "Consultant International | Formateur Certifié | Partenaire Enterprise",
+                badgeOdoo: "PARTENAIRE ODOO",
+                badgeNutanix: "PARTENAIRE NUTANIX",
+                badgeHuawei: "PARTENAIRE HUAWEI",
+                scrollText: "DÉFILEZ POUR ACCÉDER AU PORTAIL CLIENT",
+                portalTitle: "PORTAIL CLIENT INTELLIGENT",
+                portalDesc: "Qualifiez vos besoins en 2 minutes avec notre système IA avancé",
+                formTitle: "Description du Projet",
+                serviceTypeLabel: "Type de Service",
+                selectService: "Sélectionnez un Service",
+                optionERP: "Implémentation ERP (Odoo/SAP)",
+                optionAI: "Solutions IA & Chatbot Personnalisé",
+                optionDC: "Data Center Enterprise (Huawei/Nutanix)",
+                optionCyber: "Audit Cybersécurité & Pentest",
+                optionTraining: "Formation IT 360° (Équipes 10-50)",
+                optionConsulting: "Consulting Stratégique Digital",
+                companyLabel: "Nom de l'Entreprise",
+                companyPlaceholder: "Votre Entreprise",
+                emailLabel: "Email Professionnel",
+                emailPlaceholder: "ceo@entreprise.com",
+                nextBtn: "Étape Suivante →",
+                descriptionLabel: "Description du Projet",
+                descriptionPlaceholder: "Décrivez vos besoins techniques en détail...",
+                deadlineLabel: "Date Limite Souhaitée",
+                backBtn: "← Retour",
+                budgetLabel: "Budget Estimatif",
+                budgetOption1: "< €5,000 (Projet Rapide)",
+                budgetOption2: "€5,000 - €15,000 (Standard)",
+                budgetOption3: "€15,000 - €50,000 (Enterprise)",
+                budgetOption4: "> €50,000 (Sur Mesure)",
+                phoneLabel: "Téléphone (Optionnel)",
+                submitBtn: "ENVOYER LA DEMANDE",
+                chatTitle: "Assistant IA Expert",
+                chatDesc: "Posez des questions techniques, obtenez des recommandations personnalisées instantanées.",
+                chatWelcome: "<strong>Assistant IA :</strong> Bienvenue. Comment puis-je vous aider ? (Exemple : \"ERP pour 20 utilisateurs ?\")",
+                chatPlaceholder: "Votre question technique...",
+                chatExamples: "Exemples: \"Prix Odoo?\", \"IA pour e-commerce?\", \"Audit réseau?\"",
+                dashboardTitle: "Tableau de Bord Admin",
+                requestsLabel: "Nouvelles Demandes",
+                analysisLabel: "En Analyse",
+                proposalsLabel: "Devis Envoyés",
+                pipelineLabel: "Pipeline Mensuel",
+                footerTitle: "Développé par SID AHMED BELKADI | Expert IT 360°"
+            },
+            ar: {
+                heroTitle: "سيد أحمد بلقادي",
+                tagline: "خبير تكنولوجيا المعلومات 360°",
+                subtitle: "مستشار دولي | مدرب معتمد | شريك مؤسسي",
+                badgeOdoo: "شريك أودو",
+                badgeNutanix: "شريك نوتانيكس",
+                badgeHuawei: "شريك هواوي",
+                scrollText: "مرر للوصول إلى بوابة العميل",
+                portalTitle: "بوابة العميل الذكية",
+                portalDesc: "حدد احتياجاتك في 2 دقيقة مع نظامنا المتقدم بالذكاء الاصطناعي",
+                formTitle: "وصف المشروع",
+                serviceTypeLabel: "نوع الخدمة",
+                selectService: "اختر خدمة",
+                optionERP: "تنفيذ تخطيط موارد المؤسسات (أودو/SAP)",
+                optionAI: "حلول الذكاء الاصطناعي ودردشة آلي",
+                optionDC: "مركز بيانات المؤسسات (هواوي/نوتانيكس)",
+                optionCyber: "تدقيق أمني واختبار الاختراق",
+                optionTraining: "تدريب تكنولوجيا المعلومات 360° (فرق 10-50)",
+                optionConsulting: "استشارات رقمية استراتيجية",
+                companyLabel: "اسم الشركة",
+                companyPlaceholder: "شركتك",
+                emailLabel: "البريد الإلكتروني المهني",
+                emailPlaceholder: "ceo@company.com",
+                nextBtn: "الخطوة التالية →",
+                descriptionLabel: "وصف المشروع",
+                descriptionPlaceholder: "صف متطلباتك التقنية بالتفصيل...",
+                deadlineLabel: "الموعد النهائي المطلوب",
+                backBtn: "← رجوع",
+                budgetLabel: "الميزانية التقديرية",
+                budgetOption1: "< €5,000 (مشروع سريع)",
+                budgetOption2: "€5,000 - €15,000 (قياسي)",
+                budgetOption3: "€15,000 - €50,000 (مؤسسي)",
+                budgetOption4: "> €50,000 (مخصص)",
+                phoneLabel: "الهاتف (اختياري)",
+                submitBtn: "إرسال الطلب",
+                chatTitle: "مساعد ذكاء اصطناعي خبير",
+                chatDesc: "اطرح أسئلة تقنية، واحصل على توصيات فورية مخصصة.",
+                chatWelcome: "<strong>مساعد ذكاء اصطناعي:</strong> أهلاً بك. كيف يمكنني مساعدتك؟ (مثال: \"ERP لـ20 مستخدم؟\")",
+                chatPlaceholder: "سؤالك التقني...",
+                chatExamples: "أمثلة: \"أسعار أودو؟\", \"ذكاء اصطناعي للتجارة؟\", \"تدقيق أمان؟\"",
+                dashboardTitle: "لوحة تحكم المسؤول",
+                requestsLabel: "طلبات جديدة",
+                analysisLabel: "قيد التحليل",
+                proposalsLabel: "عروض مرسلة",
+                pipelineLabel: "المبيعات الشهرية",
+                footerTitle: "طور بواسطة SID AHMED BELKADI | خبير تكنولوجيا المعلومات 360°"
+            }
+        };
+
+        let currentLang = localStorage.getItem('lang') || 'en';
+        document.getElementById('langSelector').value = currentLang;
+        document.documentElement.lang = currentLang;
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('lang', lang);
+            document.documentElement.lang = lang;
+            
+            // Handle RTL for Arabic
+            if (lang === 'ar') {
+                document.body.setAttribute('dir', 'rtl');
+            } else {
+                document.body.removeAttribute('dir');
+            }
+            
+            // Update all data-translate attributes
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang][key]) {
+                    element.innerHTML = translations[lang][key];
+                }
+            });
+            
+            // Update placeholders
+            document.querySelectorAll('[data-translate-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-translate-placeholder');
+                if (translations[lang][key]) {
+                    element.placeholder = translations[lang][key];
+                }
+            });
+        }
+
+        // Initialize language on load
+        changeLanguage(currentLang);
+
+        // ====== NEURAL NETWORK BACKGROUND ======
+        const canvas = document.getElementById('neural-canvas');
+        const ctx = canvas.getContext('2d');
+        let nodes = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Node {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.3;
+                this.vy = (Math.random() - 0.5) * 0.3;
+                this.radius = Math.random() * 2 + 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0, 102, 255, 0.3)';
+                ctx.fill();
+            }
+        }
+
+        function initNodes() {
+            nodes = [];
+            for (let i = 0; i < 80; i++) {
+                nodes.push(new Node());
+            }
+        }
+
+        function drawConnections() {
+            ctx.strokeStyle = 'rgba(0, 102, 255, 0.08)';
+            ctx.lineWidth = 0.5;
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const dx = nodes[i].x - nodes[j].x;
+                    const dy = nodes[i].y - nodes[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 120) {
+                        ctx.beginPath();
+                        ctx.moveTo(nodes[i].x, nodes[i].y);
+                        ctx.lineTo(nodes[j].x, nodes[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateNeural() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawConnections();
+            nodes.forEach(node => {
+                node.update();
+                node.draw();
+            });
+            requestAnimationFrame(animateNeural);
+        }
+
+        initNodes();
+        animateNeural();
+
+        // ====== LOADER ======
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 1000);
+        });
+
+        // ====== FORM MULTI-STEP ======
+        let currentStep = 1;
+
+        function showStep(step) {
+            document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+            document.querySelector(`[data-step="${step}"]`).classList.add('active');
+        }
+
+        function nextStep() {
+            if (currentStep < 3) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        }
+
+        document.getElementById('clientForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const successMsg = currentLang === 'fr' ? 
+                '🎉 DEMANDE ENVOYÉE !\n\nDans la vraie application :\n→ Email reçu instantanément\n→ IA analyse la demande\n→ Devis généré automatiquement\n→ Notification sur votre téléphone' :
+                currentLang === 'ar' ?
+                '🎉 تم إرسال الطلب!\n\nفي التطبيق الفعلي:\n→ استلام البريد الإلكتروني فوريًا\n→ الذكاء الاصطناعي يحلل الطلب\n→ إنشاء عرض أسعار تلقائيًا\n→ إشعار على هاتفك' :
+                '🎉 REQUEST SUBMITTED!\n\nIn production:\n→ Email received instantly\n→ AI analyzes requirements\n→ Auto-generates proposal\n→ Phone notification';
+            
+            alert(successMsg);
+        });
+
+        // ====== CHATBOT ======
+        const chatResponses = {
+            en: {
+                'erp': "Odoo Enterprise recommended for 20 users. Budget: €8-12K. Deployment: 2 weeks.",
+                'ai': "E-commerce AI: Chatbot + recommendations. ROI in 3 months. From €5K.",
+                'price': "Audit: €900 | Training: €1.5K | ERP: €5-50K | AI: €5-30K | Data Center: Quote.",
+                'audit': "Complete cybersecurity audit: €900, 2 days, ISO 27001 report included."
+            },
+            fr: {
+                'erp': "Odoo Enterprise recommandé pour 20 utilisateurs. Budget: 8-12k€. Déploiement: 2 semaines.",
+                'ai': "IA e-commerce: Chatbot + recommandations. ROI en 3 mois. À partir de 5k€.",
+                'price': "Audit: 900€ | Formation: 1.5k€ | ERP: 5-50k€ | IA: 5-30k€ | Data Center: Devis.",
+                'audit': "Audit cybersécurité complet: 900€, 2 jours, rapport ISO 27001 fourni."
+            },
+            ar: {
+                'erp': "أودو المؤسسي موصى به لـ20 مستخدم. الميزانية: €8-12 ألف. النشر: أسبوعان.",
+                'ai': "ذكاء اصطناعي للتجارة: دردشة + توصيات. العائد في 3 أشهر. من €5 ألف.",
+                'price': "تدقيق: €900 | تدريب: €1.5 ألف | ERP: €5-50 ألف | ذكاء: €5-30 ألف | مركز بيانات: عرض أسعار.",
+                'audit': "تدقيق أمني كامل: €900، يومان، تقرير ISO 27001 مرفق."
+            }
+        };
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const messages = document.getElementById('chatMessages');
+            const message = input.value.toLowerCase();
+
+            if (!input.value.trim()) return;
+
+            // User message
+            messages.innerHTML += `
+                <div class="chat-message user">
+                    <strong>${currentLang === 'fr' ? 'Vous' : currentLang === 'ar' ? 'أنت' : 'You'}:</strong> ${input.value}
+                </div>
+            `;
+
+            // AI response
+            let response = currentLang === 'fr' ? 
+                "Je suis l'assistant IA de Sid. Pour un devis précis, remplissez le formulaire." :
+                currentLang === 'ar' ?
+                "أنا مساعد ذكاء اصطناعي لسيد. لعرض أسعار دقيق، املأ النموذج." :
+                "I'm Sid's AI assistant. For a precise quote, please fill the form.";
+            
+            const langResponses = chatResponses[currentLang] || chatResponses.en;
+            for (let key in langResponses) {
+                if (message.includes(key)) {
+                    response = langResponses[key];
+                    break;
+                }
+            }
+
+            setTimeout(() => {
+                messages.innerHTML += `
+                    <div class="chat-message bot">
+                        <strong>${currentLang === 'fr' ? 'IA Sid' : currentLang === 'ar' ? 'مساعد سيد' : 'AI Sid'}:</strong> ${response}
+                    </div>
+                `;
+                messages.scrollTop = messages.scrollHeight;
+            }, 800);
+
+            input.value = '';
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        });
+    </script>
+</body>
+</html>
